@@ -63,6 +63,38 @@ A good eval suite has 1-2 happy path cases and 3-4 edge cases.
 
 Each eval case should test a distinct aspect of the skill. Don't create 5 evals that all test the same thing with slightly different inputs — the improvement loop can't learn from redundant signal.
 
+## Deterministic vs. LLM Expectations
+
+Expectations fall into two categories:
+
+### Deterministic Checks (preferred when applicable)
+Programmatic validation that produces identical results every time. These live in the `deterministic_checks` array on each eval case and run before the LLM grader.
+
+Advantages:
+- Zero variance — same output, same grade, every time
+- Fast — no LLM call needed
+- Precise — exact field values, regex patterns, file existence
+
+Use for:
+- JSON field equality: "manifest_version is 0.3"
+- File existence: ".mcpbignore exists"
+- Pattern matching: "name matches ^[a-z0-9-]+$"
+- Array membership: "tools array contains search_files"
+- String presence: "file contains 'node_modules/'"
+- Validation scripts: "passes validate-manifest.sh"
+
+### LLM Expectations (for semantic judgment)
+The LLM grader reads transcripts and outputs to make qualitative judgments. Keep these for things that require understanding context.
+
+Use for:
+- Transcript behavior: "the skill asked before creating files"
+- Semantic correctness: "the recommendation is appropriate"
+- Complex multi-file reasoning: "the workflow references the correct action"
+- Intent verification: "the skill followed the correct execution order"
+
+### Migration Rule
+When reviewing existing evals, convert LLM expectations to deterministic checks wherever possible. A good eval suite should have 60-80% deterministic checks. This reduces score variance and makes the improvement loop signal more reliable.
+
 ## Expectation Anti-Patterns
 
 ### Trivially Satisfied
@@ -78,6 +110,14 @@ Each eval case should test a distinct aspect of the skill. Don't create 5 evals 
 ### Overly Specific
 - "The output contains exactly 'Hello, John! Welcome to...' " — brittle, fails on minor wording changes
 - "Line 47 contains X" — breaks if anything shifts
+
+### LLM-Graded When Deterministic Would Suffice
+- "manifest.json contains 'manifest_version': '0.3'" — use `json_field_equals`
+- "The file .mcpbignore exists" — use `file_exists`
+- "The name is lowercase" — use `json_field_matches` with regex `^[a-z0-9-]+$`
+- "Version is valid semver" — use `regex_match` with semver pattern
+
+These waste LLM grading cycles and introduce unnecessary score variance.
 
 ### Correct Approach
 - Check structural properties: "output has N sections", "each section has a header"

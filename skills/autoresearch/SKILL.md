@@ -105,8 +105,33 @@ Execute this task:
 - Read the skill at: ${WORKSPACE}/candidate/SKILL.md
 - Follow the skill's instructions to accomplish this task: {eval_case.prompt}
 - Input files: {eval_case.files or "none"}
+- Deterministic checks: {eval_case.deterministic_checks or "none"} (optional, run automatically in step 3.5)
 - Save all outputs to: ${WORKSPACE}/iteration-{i}/eval-{id}/outputs/
 - Save a transcript of your work to: ${WORKSPACE}/iteration-{i}/eval-{id}/transcript.md
+```
+
+3.5. Run deterministic checks (if the eval case has a `deterministic_checks` field):
+
+```bash
+python3 -c "
+import sys, json; sys.path.insert(0, '${SCRIPTS_DIR}')
+from deterministic_checker import run_deterministic_checks
+from pathlib import Path
+
+checks = json.loads(Path('${WORKSPACE}/candidate/evals/evals.json').read_text())
+eval_case = [e for e in (checks if isinstance(checks, list) else checks.get('evals', checks)) if str(e.get('id')) == '${eval_id}'][0]
+det_checks = eval_case.get('deterministic_checks', [])
+if det_checks:
+    result = run_deterministic_checks(
+        det_checks,
+        Path('${WORKSPACE}/iteration-${i}/eval-${eval_id}/outputs/'),
+        env={'OUTPUTS_DIR': '${WORKSPACE}/iteration-${i}/eval-${eval_id}/outputs/'}
+    )
+    Path('${WORKSPACE}/iteration-${i}/eval-${eval_id}/deterministic-results.json').write_text(
+        json.dumps(result, indent=2)
+    )
+    print(f'Deterministic: {result[\"summary\"][\"passed\"]}/{result[\"summary\"][\"total\"]} passed')
+"
 ```
 
 4. Grade by spawning a grader subagent that reads `${SKILL_CREATOR}/agents/grader.md`:
@@ -116,10 +141,27 @@ You are a grader. Read and follow the instructions in: ${SKILL_CREATOR}/agents/g
 
 Grade these expectations against the execution results:
 - expectations: {eval_case.expectations}
+- deterministic_checks: {eval_case.deterministic_checks or "none"} (optional, results merged in step 4.5)
 - transcript_path: ${WORKSPACE}/iteration-{i}/eval-{id}/transcript.md
 - outputs_dir: ${WORKSPACE}/iteration-{i}/eval-{id}/outputs/
 
 Write grading.json to: ${WORKSPACE}/iteration-{i}/eval-{id}/grading.json
+```
+
+4.5. Merge deterministic results into grading (if deterministic-results.json exists):
+
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${SCRIPTS_DIR}')
+from deterministic_checker import merge_deterministic_into_grading
+from pathlib import Path
+
+det = Path('${WORKSPACE}/iteration-${i}/eval-${eval_id}/deterministic-results.json')
+grading = Path('${WORKSPACE}/iteration-${i}/eval-${eval_id}/grading.json')
+if det.exists() and grading.exists():
+    merge_deterministic_into_grading(det, grading)
+    print('Merged deterministic results into grading.json')
+"
 ```
 
 5. Compute composite score:

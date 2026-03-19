@@ -48,6 +48,7 @@ Write `evals/evals.json` following this schema:
       "prompt": "Realistic user prompt that exercises the skill",
       "expected_output": "Human-readable description of what success looks like",
       "files": [],
+      "deterministic_checks": [],
       "expectations": [
         "Specific, verifiable assertion about the output",
         "Another assertion checking a different aspect"
@@ -56,6 +57,70 @@ Write `evals/evals.json` following this schema:
   ]
 }
 ```
+
+### Step 3b: Add Deterministic Checks
+
+For any expectation that can be verified programmatically, add a corresponding entry in the `deterministic_checks` array on the eval case. Deterministic checks produce zero-variance pass/fail results — the same output always gets the same grade.
+
+**When to use deterministic checks**:
+- File existence/absence (`file_exists`, `file_not_exists`)
+- JSON validity (`json_valid`)
+- JSON field values (`json_field_equals`, `json_field_exists`, `json_field_absent`)
+- Pattern matching on field values (`json_field_matches`)
+- Array length (`json_field_count` with op: eq/gte/lte)
+- Array membership (`json_array_contains` with partial object match)
+- String presence in files (`file_contains`, `file_not_contains`)
+- Regex matching in files (`regex_match`)
+- Running validation scripts (`shell_command`)
+
+**When to keep LLM expectations instead**:
+- Transcript behavior checks ("the skill asked the user before proceeding")
+- Semantic correctness ("the recommendation is appropriate given the input")
+- Complex multi-file reasoning ("the workflow references the correct action version")
+- Qualitative judgments ("output is well-structured")
+
+**Conversion rule**: If an LLM expectation uses words like "must contain", "must equal", "must exist", "must NOT contain", or "must match", it is a candidate for a deterministic check.
+
+Example conversion:
+
+LLM only:
+```json
+{
+  "expectations": [
+    {
+      "description": "manifest.json has manifest_version 0.3",
+      "check": "output_file_content",
+      "file": "manifest.json",
+      "criteria": "Must contain '\"manifest_version\": \"0.3\"'"
+    }
+  ]
+}
+```
+
+With deterministic check:
+```json
+{
+  "deterministic_checks": [
+    {
+      "type": "json_field_equals",
+      "file": "manifest.json",
+      "path": ".manifest_version",
+      "expected": "0.3",
+      "description": "manifest_version is 0.3"
+    }
+  ],
+  "expectations": [
+    {
+      "description": "manifest.json follows MCPB spec structure holistically",
+      "check": "output_file_content",
+      "file": "manifest.json",
+      "criteria": "Overall structure follows MCPB spec with proper nesting and complete fields"
+    }
+  ]
+}
+```
+
+**Target**: A mature eval suite should have 60-80% deterministic checks. Reserve LLM expectations for semantic verification that requires judgment.
 
 ### Step 4: Write Quality Expectations
 
