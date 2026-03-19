@@ -4,18 +4,18 @@ Autoresearch documentation follows the [Diataxis](https://diataxis.fr/) framewor
 
 ```
                  LEARNING                          WORKING
-            ┌──────────────────┐            ┌──────────────────┐
-            │                  │            │                  │
-  PRACTICAL │    Tutorials     │            │   How-To Guides  │
-            │  learning-oriented            │  task-oriented   │
-            │                  │            │                  │
-            └──────────────────┘            └──────────────────┘
-            ┌──────────────────┐            ┌──────────────────┐
-            │                  │            │                  │
-THEORETICAL │   Explanation    │            │    Reference     │
-            │ understanding-oriented        │ information-oriented
-            │                  │            │                  │
-            └──────────────────┘            └──────────────────┘
+            ┌───────────────────────┐          ┌──────────────────────┐
+            │                       │          │                      │
+  PRACTICAL │    Tutorials          │          │   How-To Guides      │ 
+            │  learning-oriented    │          │  task-oriented       │
+            │                       │          │                      │
+            └───────────────────────┘          └──────────────────────┘
+            ┌────────────────────────┐         ┌──────────────────────┐
+            │                        │         │                      │
+THEORETICAL │   Explanation          │         │    Reference         │
+            │ understanding-oriented │         │ information-oriented │
+            │                        │         │                      │
+            └────────────────────────┘         └──────────────────────┘
 ```
 
 ## Tutorials — Learn by doing
