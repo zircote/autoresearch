@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#818cf8"/>
+      <stop offset="100%" style="stop-color:#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#34d399"/>
+      <stop offset="100%" style="stop-color:#6ee7b7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.05">
+    <line x1="0" y1="0" x2="1280" y2="640" stroke="#818cf8" stroke-width="1"/>
+    <line x1="0" y1="640" x2="1280" y2="0" stroke="#818cf8" stroke-width="1"/>
+    <line x1="640" y1="0" x2="640" y2="640" stroke="#818cf8" stroke-width="1"/>
+    <line x1="0" y1="320" x2="1280" y2="320" stroke="#818cf8" stroke-width="1"/>
+  </g>
+
+  <!-- Decorative geometric shapes - top left -->
+  <polygon points="80,60 120,30 160,60" fill="#818cf8" opacity="0.08"/>
+  <polygon points="100,80 140,50 180,80" fill="#a78bfa" opacity="0.06"/>
+  <circle cx="200" cy="55" r="15" fill="#818cf8" opacity="0.06"/>
+
+  <!-- Decorative geometric shapes - top right -->
+  <rect x="1080" y="40" width="40" height="40" rx="4" fill="#818cf8" opacity="0.06" transform="rotate(15 1100 60)"/>
+  <rect x="1140" y="50" width="30" height="30" rx="4" fill="#a78bfa" opacity="0.05" transform="rotate(-10 1155 65)"/>
+  <circle cx="1200" cy="70" r="12" fill="#818cf8" opacity="0.07"/>
+
+  <!-- Title -->
+  <text x="640" y="155" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="800" fill="#f1f5f9" text-anchor="middle" letter-spacing="-2">autoresearch</text>
+
+  <!-- Subtitle -->
+  <text x="640" y="205" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" font-weight="400" fill="#94a3b8" text-anchor="middle">Autonomous skill improvement for Claude Code</text>
+
+  <!-- Loop visualization - 5 nodes, nearly full width -->
+  <g transform="translate(70, 380)">
+    <!-- Connecting arcs -->
+    <path d="M 140,0 Q 247,-90 355,0" fill="none" stroke="#818cf8" stroke-width="3" opacity="0.25"/>
+    <path d="M 355,0 Q 462,-90 570,0" fill="none" stroke="#818cf8" stroke-width="3" opacity="0.35"/>
+    <path d="M 570,0 Q 677,-90 785,0" fill="none" stroke="#818cf8" stroke-width="3" opacity="0.45"/>
+    <path d="M 785,0 Q 892,-90 1000,0" fill="none" stroke="#818cf8" stroke-width="3" opacity="0.55"/>
+
+    <!-- Arrow hints -->
+    <polygon points="778,-10 792,-5 782,5" fill="#818cf8" opacity="0.45"/>
+    <polygon points="993,-10 1007,-5 997,5" fill="#818cf8" opacity="0.55"/>
+
+    <!-- Feedback loop arrow -->
+    <path d="M 1000,30 Q 1000,120 570,120 Q 140,120 140,30" fill="none" stroke="url(#green)" stroke-width="2.5" stroke-dasharray="10,5" opacity="0.35"/>
+    <polygon points="145,35 133,28 145,21" fill="#34d399" opacity="0.45"/>
+
+    <!-- Node 1: Snapshot -->
+    <circle cx="140" cy="0" r="55" fill="#1e293b" stroke="#818cf8" stroke-width="3"/>
+    <rect x="121" y="-14" width="38" height="24" rx="3" fill="#818cf8" opacity="0.15"/>
+    <rect x="126" y="-8" width="28" height="3" rx="1.5" fill="#818cf8" opacity="0.5"/>
+    <rect x="126" y="0" width="18" height="3" rx="1.5" fill="#818cf8" opacity="0.5"/>
+    <text x="140" y="80" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="middle">SNAPSHOT</text>
+
+    <!-- Node 2: Evaluate -->
+    <circle cx="355" cy="0" r="55" fill="#1e293b" stroke="#818cf8" stroke-width="3"/>
+    <path d="M 339,-14 L 355,10 L 371,-14" fill="none" stroke="#818cf8" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <line x1="355" y1="-20" x2="355" y2="14" stroke="#818cf8" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <text x="355" y="80" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="middle">EVALUATE</text>
+
+    <!-- Node 3: Improve (hero node) -->
+    <circle cx="570" cy="0" r="55" fill="#1e293b" stroke="url(#accent)" stroke-width="4"/>
+    <text x="570" y="2" font-family="system-ui, sans-serif" font-size="32" fill="#a78bfa" text-anchor="middle" dominant-baseline="middle">⚡</text>
+    <text x="570" y="80" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="middle">IMPROVE</text>
+
+    <!-- Node 4: Evaluate again -->
+    <circle cx="785" cy="0" r="55" fill="#1e293b" stroke="#818cf8" stroke-width="3"/>
+    <path d="M 769,-14 L 785,10 L 801,-14" fill="none" stroke="#818cf8" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <line x1="785" y1="-20" x2="785" y2="14" stroke="#818cf8" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <text x="785" y="80" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="middle">EVALUATE</text>
+
+    <!-- Node 5: Keep/Discard -->
+    <circle cx="1000" cy="0" r="55" fill="#1e293b" stroke="url(#green)" stroke-width="3"/>
+    <text x="986" y="6" font-family="system-ui, sans-serif" font-size="24" fill="#34d399" font-weight="700">✓</text>
+    <text x="1014" y="6" font-family="system-ui, sans-serif" font-size="24" fill="#fbbf24" font-weight="700">✗</text>
+    <text x="1000" y="80" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="middle">DECIDE</text>
+
+    <!-- Loop label -->
+    <text x="570" y="145" font-family="system-ui, sans-serif" font-size="14" fill="#64748b" text-anchor="middle" font-style="italic">repeat until convergence</text>
+  </g>
+
+  <!-- Bottom tagline -->
+  <text x="640" y="575" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#64748b" text-anchor="middle">Inspired by Karpathy's autoresearch · Claude Code Plugin</text>
+
+  <!-- Score trajectory sparkline (bottom right) -->
+  <g transform="translate(1060, 545)" opacity="0.35">
+    <polyline points="0,30 15,25 30,15 45,18 60,8 75,5 90,3" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="90" cy="3" r="3" fill="#34d399"/>
+  </g>
+</svg>

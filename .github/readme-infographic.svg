@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="100%" style="stop-color:#f0f0f5"/>
+    </linearGradient>
+    <linearGradient id="purple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="500" rx="12" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <text x="450" y="44" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#1e293b" text-anchor="middle">Architecture Overview</text>
+
+  <!-- Orchestrator circle (top center) -->
+  <circle cx="450" cy="120" r="52" fill="url(#purple)"/>
+  <text x="450" y="114" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="white" text-anchor="middle">SKILL.md</text>
+  <text x="450" y="132" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="white" text-anchor="middle">Orchestrator</text>
+
+  <!-- Connection lines from orchestrator to agents -->
+  <line x1="405" y1="155" x2="130" y2="220" stroke="#6366f1" stroke-width="2" opacity="0.25"/>
+  <line x1="450" y1="172" x2="450" y2="220" stroke="#6366f1" stroke-width="2" opacity="0.25"/>
+  <line x1="495" y1="155" x2="770" y2="220" stroke="#6366f1" stroke-width="2" opacity="0.25"/>
+
+  <!-- Three agent circles — nearly fill width: centers at 130, 450, 770 (r=80) -->
+  <circle cx="130" cy="280" r="80" fill="white" stroke="#6366f1" stroke-width="2.5"/>
+  <text x="130" y="274" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#6366f1" text-anchor="middle">Improver</text>
+  <text x="130" y="296" font-family="system-ui, sans-serif" font-size="14" font-weight="400" fill="#818cf8" text-anchor="middle">Agent</text>
+
+  <circle cx="450" cy="280" r="80" fill="white" stroke="#6366f1" stroke-width="2.5"/>
+  <text x="450" y="274" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#6366f1" text-anchor="middle">Eval Doctor</text>
+  <text x="450" y="296" font-family="system-ui, sans-serif" font-size="14" font-weight="400" fill="#818cf8" text-anchor="middle">Agent</text>
+
+  <circle cx="770" cy="280" r="80" fill="white" stroke="#6366f1" stroke-width="2.5"/>
+  <text x="770" y="274" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="#6366f1" text-anchor="middle">Convergence</text>
+  <text x="770" y="296" font-family="system-ui, sans-serif" font-size="14" font-weight="400" fill="#818cf8" text-anchor="middle">Reporter</text>
+
+  <!-- Connection lines from agents down to script row -->
+  <line x1="130" y1="360" x2="130" y2="395" stroke="#94a3b8" stroke-width="1.5" opacity="0.25" stroke-dasharray="5,3"/>
+  <line x1="370" y1="340" x2="340" y2="395" stroke="#94a3b8" stroke-width="1.5" opacity="0.25" stroke-dasharray="5,3"/>
+  <line x1="530" y1="340" x2="560" y2="395" stroke="#94a3b8" stroke-width="1.5" opacity="0.25" stroke-dasharray="5,3"/>
+  <line x1="770" y1="360" x2="770" y2="395" stroke="#94a3b8" stroke-width="1.5" opacity="0.25" stroke-dasharray="5,3"/>
+
+  <!-- Four script pills — bottom row -->
+  <rect x="40" y="398" width="180" height="36" rx="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="130" y="421" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#475569" text-anchor="middle">snapshot.py</text>
+
+  <rect x="250" y="398" width="180" height="36" rx="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="340" y="421" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#475569" text-anchor="middle">score.py</text>
+
+  <rect x="460" y="398" width="200" height="36" rx="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="560" y="421" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#475569" text-anchor="middle">results_log.py</text>
+
+  <rect x="690" y="398" width="180" height="36" rx="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="780" y="421" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#475569" text-anchor="middle">diff_report.py</text>
+
+  <!-- Bottom row: workspace + external dep -->
+  <rect x="40" y="452" width="480" height="36" rx="18" fill="white" stroke="url(#green)" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="280" y="475" font-family="system-ui, sans-serif" font-size="13" fill="#475569" text-anchor="middle">Workspace: v0/ · candidate/ · results.tsv · grading.json</text>
+
+  <rect x="550" y="452" width="310" height="36" rx="18" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="705" y="475" font-family="system-ui, sans-serif" font-size="13" fill="#92400e" text-anchor="middle">skill-creator grader (external)</text>
+</svg>
