@@ -1,6 +1,14 @@
 # autoresearch
 
+[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-6366f1?style=flat-square)](https://github.com/zircote/autoresearch) [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776ab?style=flat-square&logo=python&logoColor=white)](https://python.org) [![Tests](https://img.shields.io/badge/Tests-18%20passing-10b981?style=flat-square)](tests/) [![Docs](https://img.shields.io/badge/Docs-Diátaxis-f59e0b?style=flat-square)](docs/) [![License](https://img.shields.io/github/license/zircote/autoresearch?style=flat-square)](LICENSE)
+
 Autonomous skill improvement for Claude Code plugins. Inspired by [Andrej Karpathy's autoresearch](https://github.com/karpathy/autoresearch) — an autonomous improvement loop where AI agents iterate on artifacts while humans sleep. Point it at a skill, walk away, come back to a better skill.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/social-preview-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset=".github/social-preview.svg">
+  <img alt="autoresearch - autonomous skill improvement loop" src=".github/social-preview.svg" width="100%">
+</picture>
 
 Autoresearch runs an improvement loop: modify the skill, evaluate it against fixed evals, keep improvements, discard regressions. Repeat until convergence. No babysitting required.
 
@@ -25,34 +33,36 @@ claude plugins add ./
 
 ## How It Works
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    AUTORESEARCH LOOP                            │
-│                                                                 │
-│  ┌───────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐  │
-│  │ SNAPSHOT  │───▶│ EVALUATE │───▶│ IMPROVE  │───▶│ EVALUATE │  │
-│  │ baseline  │    │ baseline │    │ candidate│    │ candidate│  │
-│  └───────────┘    └──────────┘    └──────────┘    └──────────┘  │
-│                                        │               │        │
-│                                        │         ┌─────┴─────┐  │
-│                                        │         │  score >  │  │
-│                                        │         │  best?    │  │
-│                                        │         └─────┬─────┘  │
-│                                        │           │       │    │
-│                                        │          YES      NO   │
-│                                        │           │       │    │
-│                                   ┌────┘     ┌─────┴──┐ ┌──┴──┐ │
-│                                   │ LOOP ◀───│  KEEP  │ │RVRT │ │
-│                                   └──────────│snapshot│ │prev │ │
-│                                              └────────┘ └─────┘ │
-│                                                                 │
-│  STOP when: perfect score │ 3 consecutive reverts │ max iters   │
-│                                                                 │
-│  ┌──────────────┐    ┌──────────┐    ┌──────────┐               │
-│  │ CONVERGENCE  │───▶│  SHOW    │───▶│  APPLY?  │               │
-│  │   REPORT     │    │  DIFF    │    │  (y/n)   │               │
-│  └──────────────┘    └──────────┘    └──────────┘               │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A[Snapshot Baseline] --> B[Evaluate Baseline]
+    B --> C[Improve Candidate]
+    C --> D[Evaluate Candidate]
+    D --> E{Score > Best?}
+    E -->|Yes| F[Keep — Snapshot v·N]
+    E -->|No| G[Revert — Restore Best]
+    F --> H{Stop?}
+    G --> H
+    H -->|Perfect score ·or· 3 reverts ·or· max iters| I[Convergence Report]
+    H -->|Continue| C
+    I --> J[Show Diff]
+    J --> K{Apply to Original?}
+    K -->|Yes| L[Restore Best → Skill]
+    K -->|No| M[Changes Stay in Workspace]
+
+    style A fill:#6366f1,color:#fff,stroke:#4f46e5
+    style B fill:#f1f5f9,stroke:#94a3b8
+    style C fill:#6366f1,color:#fff,stroke:#4f46e5
+    style D fill:#f1f5f9,stroke:#94a3b8
+    style E fill:#fef3c7,stroke:#f59e0b
+    style F fill:#d1fae5,stroke:#10b981
+    style G fill:#fee2e2,stroke:#ef4444
+    style H fill:#fef3c7,stroke:#f59e0b
+    style I fill:#ede9fe,stroke:#8b5cf6
+    style J fill:#ede9fe,stroke:#8b5cf6
+    style K fill:#fef3c7,stroke:#f59e0b
+    style L fill:#d1fae5,stroke:#10b981
+    style M fill:#f1f5f9,stroke:#94a3b8
 ```
 
 ## Three Modes
@@ -81,6 +91,10 @@ Creates or fixes evaluation cases for a skill. Run this first when a skill has n
 ```
 
 Generates a convergence report from an existing workspace. Useful for reviewing results after a run completes.
+
+## Architecture
+
+<img src=".github/readme-infographic.svg" alt="autoresearch architecture" width="100%">
 
 ## Documentation
 
