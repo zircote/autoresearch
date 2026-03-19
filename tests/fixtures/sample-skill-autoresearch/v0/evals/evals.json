@@ -1,0 +1,27 @@
+{
+  "skill_name": "sample-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Format this text into a professional email: Hey bob, wanted to check in about the Q4 numbers. they look off to me.",
+      "expected_output": "A well-formatted professional email",
+      "files": [],
+      "expectations": [
+        "The output contains a greeting",
+        "The output contains a sign-off",
+        "The output is properly formatted with paragraphs"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Take this messy list and make it a clean bulleted list: apples oranges bananas grapes (maybe) pears",
+      "expected_output": "A clean bulleted list of fruits",
+      "files": [],
+      "expectations": [
+        "The output uses bullet points or dashes for each item",
+        "All five fruits are included in the list",
+        "The parenthetical note about grapes is handled appropriately"
+      ]
+    }
+  ]
+}

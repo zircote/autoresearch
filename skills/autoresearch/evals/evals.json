@@ -1,0 +1,47 @@
+{
+  "skill_name": "autoresearch",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a skill at tests/fixtures/sample-skill/ that's not performing well. Run autoresearch on it to improve it. Use 2 iterations max.",
+      "expected_output": "Creates a workspace, snapshots the skill, attempts to run the improvement loop with evaluation and keep/discard logic",
+      "files": [],
+      "expectations": [
+        "Creates a workspace directory named sample-skill-autoresearch as a sibling to the skill",
+        "Snapshots the original skill to a v0 directory in the workspace",
+        "Creates a candidate copy of the skill in the workspace",
+        "Attempts to locate the skill-creator plugin for grading",
+        "Checks for evals/evals.json in the skill directory",
+        "References or uses the snapshot.py script for copying"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Run autoresearch in eval-doctor mode on tests/fixtures/sample-skill/ — it needs proper evaluation cases created.",
+      "expected_output": "Detects eval-doctor mode, analyzes the sample skill, and creates evals/evals.json with well-structured evaluation cases",
+      "files": [],
+      "expectations": [
+        "Detects eval-doctor mode from the user input",
+        "Reads the sample skill's SKILL.md to understand what it does",
+        "Creates or references evals/evals.json with valid JSON schema",
+        "Each eval case includes id, prompt, expected_output, and expectations fields",
+        "The generated eval prompts are realistic and specific, not generic",
+        "Suggests running the full improvement loop after evals are ready"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me the autoresearch convergence report for the workspace at tests/fixtures/sample-skill-autoresearch/",
+      "expected_output": "Reads results.tsv and grading files, produces a convergence report with score trajectory table and recommendation",
+      "files": [],
+      "expectations": [
+        "Detects report mode from the user input",
+        "Reads results.tsv from the workspace directory",
+        "Displays a score trajectory showing iterations 0, 1, and 2",
+        "Shows that iteration 1 was kept (score improved from 0.45 to 0.67) and iteration 2 was reverted",
+        "Includes a recommendation about whether to apply changes or continue",
+        "References or uses the diff_report.py script to compare v0 vs best version"
+      ]
+    }
+  ]
+}

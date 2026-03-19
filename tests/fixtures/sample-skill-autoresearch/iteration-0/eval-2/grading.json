@@ -1,0 +1,62 @@
+{
+  "expectations": [
+    {
+      "text": "The output uses bullet points or dashes for each item",
+      "passed": true,
+      "evidence": "formatted-list.md contains five lines, each starting with '- ' (Markdown dash bullets): '- Apples', '- Oranges', '- Bananas', '- Grapes (maybe)', '- Pears'."
+    },
+    {
+      "text": "All five fruits are included in the list",
+      "passed": true,
+      "evidence": "All five fruits from the input are present in formatted-list.md: Apples (line 1), Oranges (line 2), Bananas (line 3), Grapes (line 4), Pears (line 5)."
+    },
+    {
+      "text": "The parenthetical note about grapes is handled appropriately",
+      "passed": true,
+      "evidence": "The '(maybe)' annotation is preserved inline with grapes: '- Grapes (maybe)' on line 4 of formatted-list.md. The parenthetical is kept as context rather than dropped or treated as a separate item."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 1,
+      "Bash": 1,
+      "Write": 2
+    },
+    "total_tool_calls": 4,
+    "total_steps": 5,
+    "errors_encountered": 0,
+    "output_chars": 55,
+    "transcript_chars": 784
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "The messy inline list was converted to a clean bulleted Markdown list with five items",
+      "type": "quality",
+      "verified": true,
+      "evidence": "formatted-list.md contains exactly five dash-bulleted items, one per line, each capitalized, matching the five fruits from the input."
+    },
+    {
+      "claim": "Each item was capitalized",
+      "type": "factual",
+      "verified": true,
+      "evidence": "All items start with uppercase: Apples, Oranges, Bananas, Grapes, Pears."
+    }
+  ],
+  "user_notes_summary": null,
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The parenthetical note about grapes is handled appropriately",
+        "reason": "The word 'appropriately' is subjective and would pass for multiple different handlings (dropping it, keeping it inline, adding it as a sub-bullet, etc.). Consider specifying the expected behavior, e.g., 'The (maybe) annotation is preserved inline with Grapes'."
+      }
+    ],
+    "overall": "Assertions cover the core outcomes well for this simple formatting task. The only soft spot is the vague 'handled appropriately' wording on the parenthetical expectation."
+  }
+}

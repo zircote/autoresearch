@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "The output contains a greeting",
+      "passed": true,
+      "evidence": "Found 'Dear Bob' at the start of the email"
+    },
+    {
+      "text": "The output contains a sign-off",
+      "passed": false,
+      "evidence": "No sign-off or closing found at the end"
+    },
+    {
+      "text": "The output is properly formatted with paragraphs",
+      "passed": true,
+      "evidence": "Email has clear paragraph breaks between greeting, body, and request"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.67
+  }
+}
