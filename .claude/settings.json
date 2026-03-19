@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(python *)",
+      "Bash(pytest *)",
+      "Bash(${CLAUDE_PLUGIN_ROOT}/skills/autoresearch/scripts/*)",
+      "Bash(diff *)",
+      "Bash(cp -r *)",
+      "Bash(mkdir -p *)",
+      "Bash(sha256sum *)",
+      "Bash(shasum *)",
+      "Bash(cat *)",
+      "Bash(wc *)"
+    ]
+  }
+}

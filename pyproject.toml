@@ -1,0 +1,19 @@
+[project]
+name = "autoresearch"
+version = "0.1.0"
+description = "Autonomous skill improvement loop for Claude Code skills"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["skills/autoresearch"]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.backends._legacy:_Backend"

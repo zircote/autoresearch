@@ -1,0 +1,7 @@
+{
+  "name": "autoresearch",
+  "description": "Autonomous skill improvement loop inspired by Karpathy's autoresearch pattern. Iteratively modifies skills, evaluates against fixed evals, and keeps or discards changes to converge on higher quality. Includes eval management and convergence reporting.",
+  "author": {
+    "name": "zircote"
+  }
+}
