@@ -1,88 +1,115 @@
 {
+  "summary": {
+    "pass_rate": 0.67,
+    "passed": 14,
+    "failed": 7,
+    "total": 21
+  },
   "expectations": [
     {
-      "text": "The output contains a greeting",
+      "expectation": "The output addresses 'Bob' by name with a proper salutation",
       "passed": true,
-      "evidence": "Line 3 of output.md: \"Hi Bob,\" — a clear professional greeting addressing the recipient by name."
+      "evidence": "The output begins with 'Dear Bob'"
     },
     {
-      "text": "The output contains a sign-off",
+      "expectation": "The output contains a reference to Q4 numbers being reviewed",
       "passed": true,
-      "evidence": "Lines 9-10 of output.md: \"Best regards,\\n[Your Name]\" — a standard professional sign-off with a name placeholder."
+      "evidence": "Q4 numbers discussion is in the body paragraph"
     },
     {
-      "text": "The output is properly formatted with paragraphs",
+      "expectation": "The output includes a specific request to meet on Thursday",
       "passed": true,
-      "evidence": "output.md uses blank lines to separate the subject line, greeting, body paragraph, call-to-action paragraph, and sign-off into distinct visual blocks. Each section is separated by a blank line, forming proper paragraph structure."
+      "evidence": "Thursday meeting request is clearly stated"
+    },
+    {
+      "expectation": "The output mentions west coast accounts or Sarah's feedback",
+      "passed": true,
+      "evidence": "Sarah's feedback about west coast accounts is mentioned"
+    },
+    {
+      "expectation": "The output ends with a professional closing",
+      "passed": true,
+      "evidence": "Output ends with 'Best regards' and a name"
+    },
+    {
+      "expectation": "The output uses consistent bullet markers for each item",
+      "passed": true,
+      "evidence": "All items use dash bullet markers consistently"
+    },
+    {
+      "expectation": "All five fruits appear in the list",
+      "passed": true,
+      "evidence": "All five fruits are present in the list"
+    },
+    {
+      "expectation": "Each fruit appears on its own separate line",
+      "passed": true,
+      "evidence": "Each fruit is on its own line"
+    },
+    {
+      "expectation": "The parenthetical note '(maybe)' is preserved or noted",
+      "passed": true,
+      "evidence": "Grapes listed as 'grapes (maybe)'"
+    },
+    {
+      "expectation": "The list does NOT contain extra items",
+      "passed": true,
+      "evidence": "No extra items added"
+    },
+    {
+      "expectation": "The output has distinct labeled sections for meeting notes",
+      "passed": true,
+      "evidence": "Clear headers for Attendees, Date, Discussion, Decisions, and Next Steps"
+    },
+    {
+      "expectation": "All three attendees are listed",
+      "passed": true,
+      "evidence": "Mike, Jenny, and Carlos listed under Attendees"
+    },
+    {
+      "expectation": "The date March 5 appears in the formatted output",
+      "passed": true,
+      "evidence": "Date: March 5 is present"
+    },
+    {
+      "expectation": "The decisions section mentions the $50k threshold",
+      "passed": false,
+      "evidence": "Decisions section mentions Acme Corp but omits the $50k threshold"
+    },
+    {
+      "expectation": "Each next-step action item is attributed to the correct person",
+      "passed": false,
+      "evidence": "Carlos and Jenny attributed correctly but Mike's action was missing"
+    },
+    {
+      "expectation": "The output contains a table structure with headers",
+      "passed": false,
+      "evidence": "Output formatted as aligned text but missing proper table headers"
+    },
+    {
+      "expectation": "Product A appears with quantity 100 and price $5.99",
+      "passed": false,
+      "evidence": "Product A listed but price shown as $5.99/unit without clear column"
+    },
+    {
+      "expectation": "The output does NOT contain an unhandled error",
+      "passed": true,
+      "evidence": "No errors in output"
+    },
+    {
+      "expectation": "The output acknowledges empty text was provided",
+      "passed": false,
+      "evidence": "Skill returned an empty string instead of an acknowledgment message"
+    },
+    {
+      "expectation": "Extra whitespace between words is normalized",
+      "passed": true,
+      "evidence": "All extra whitespace normalized to single spaces"
+    },
+    {
+      "expectation": "The missing space between sentences is corrected",
+      "passed": false,
+      "evidence": "The 'happy.the' was not corrected to 'happy. The'"
     }
-  ],
-  "summary": {
-    "passed": 3,
-    "failed": 0,
-    "total": 3,
-    "pass_rate": 1.0
-  },
-  "execution_metrics": {
-    "tool_calls": {
-      "Read": 1,
-      "Bash": 1,
-      "Write": 1
-    },
-    "total_tool_calls": 3,
-    "total_steps": 6,
-    "errors_encountered": 0,
-    "output_chars": 290,
-    "transcript_chars": 2391
-  },
-  "timing": {},
-  "claims": [
-    {
-      "claim": "The format identified is Professional Email per SKILL.md rules",
-      "type": "process",
-      "verified": true,
-      "evidence": "Transcript Step 3 identifies the format as Professional Email. The output follows standard email structure with subject, greeting, body, and sign-off."
-    },
-    {
-      "claim": "Every fact from the input is represented in the output",
-      "type": "quality",
-      "verified": true,
-      "evidence": "Input mentions Bob (present as recipient), Q4 numbers (present in subject and body), and they look off (reworded as 'discrepancies that warrant a closer look'). All facts preserved."
-    },
-    {
-      "claim": "Tone is consistently professional with no slang",
-      "type": "quality",
-      "verified": true,
-      "evidence": "The output uses formal phrasing ('reach out regarding', 'discrepancies that warrant', 'schedule some time'). No slang or casual language present."
-    },
-    {
-      "claim": "Subject line matches email content",
-      "type": "factual",
-      "verified": true,
-      "evidence": "Subject is 'Q4 Numbers Review' and the body discusses reviewing Q4 numbers — they align."
-    }
-  ],
-  "user_notes_summary": null,
-  "eval_feedback": {
-    "suggestions": [
-      {
-        "assertion": "The output contains a greeting",
-        "reason": "This assertion is trivially satisfied — any output containing the word 'Hello', 'Hi', or 'Dear' passes regardless of whether the greeting is correctly addressed to the right person. Consider checking that the greeting addresses 'Bob' specifically, matching the input."
-      },
-      {
-        "assertion": "The output contains a sign-off",
-        "reason": "Similarly weak — any closing phrase passes. A stronger check would verify the sign-off follows the SKILL.md rules (sign-off phrase AND sender name on the next line)."
-      },
-      {
-        "assertion": "The output is properly formatted with paragraphs",
-        "reason": "Vague and easy to satisfy. Any output with two newlines somewhere passes. Consider checking for specific structural elements: subject line on the first line, blank-line-separated sections, and that the email has at minimum a subject, greeting, body, and sign-off block."
-      },
-      {
-        "reason": "No assertion checks that the output preserves the factual content from the input (Q4 numbers, the concern that they look off, and the recipient Bob). An output that produces a perfectly formatted but content-irrelevant email would pass all three assertions."
-      },
-      {
-        "reason": "No assertion checks that the tone was transformed from casual to professional. The skill's purpose is tone transformation, yet the evals only check structural formatting."
-      }
-    ],
-    "overall": "All three assertions test surface-level structure and are trivially satisfiable. They would pass for almost any email-shaped output regardless of whether the skill correctly transformed the input. The evals need content-verification and tone-checking assertions to be discriminating."
-  }
+  ]
 }

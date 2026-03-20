@@ -1,0 +1,68 @@
+[
+  {
+    "query": "format this text into a professional email",
+    "should_trigger": true
+  },
+  {
+    "query": "hey can you clean up this messy paragraph for me",
+    "should_trigger": true
+  },
+  {
+    "query": "take these notes and make them look nice",
+    "should_trigger": true
+  },
+  { "query": "I need this data formatted as a table", "should_trigger": true },
+  {
+    "query": "can u reformat this list so it's easier to read",
+    "should_trigger": true
+  },
+  {
+    "query": "make this contact info look like a business card",
+    "should_trigger": true
+  },
+  {
+    "query": "clean up the formatting on this meeting summary",
+    "should_trigger": true
+  },
+  {
+    "query": "format this jumbled text into proper paragraphs",
+    "should_trigger": true
+  },
+  {
+    "query": "this text is a mess, can you make it presentable",
+    "should_trigger": true
+  },
+  {
+    "query": "write me a Python script to parse CSV files",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the weather like in San Francisco today",
+    "should_trigger": false
+  },
+  {
+    "query": "debug this JavaScript function that's throwing errors",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how async/await works in Python",
+    "should_trigger": false
+  },
+  {
+    "query": "create a new React component for the dashboard",
+    "should_trigger": false
+  },
+  {
+    "query": "run the test suite and fix any failures",
+    "should_trigger": false
+  },
+  {
+    "query": "translate this paragraph from English to Spanish",
+    "should_trigger": false
+  },
+  {
+    "query": "generate a summary of this 50-page PDF",
+    "should_trigger": false
+  },
+  { "query": "set up a CI/CD pipeline for this repo", "should_trigger": false }
+]

@@ -1,110 +1,110 @@
 {
   "summary": {
-    "pass_rate": 0.45,
-    "passed": 9,
-    "failed": 11,
+    "pass_rate": 0.5,
+    "passed": 10,
+    "failed": 10,
     "total": 20
   },
   "expectations": [
     {
       "expectation": "The output addresses 'Bob' by name with a proper salutation",
       "passed": true,
-      "evidence": "The output begins with 'Hi Bob'"
+      "evidence": "The output begins with 'Dear Bob'"
     },
     {
       "expectation": "The output contains a reference to Q4 numbers being reviewed",
       "passed": true,
-      "evidence": "Q4 numbers are mentioned in the body"
+      "evidence": "Q4 numbers mentioned in the email body"
     },
     {
       "expectation": "The output includes a specific request to meet on Thursday",
       "passed": true,
-      "evidence": "Thursday meeting request is present"
+      "evidence": "Thursday meeting request present"
     },
     {
       "expectation": "The output mentions west coast accounts or Sarah's feedback",
-      "passed": false,
-      "evidence": "West coast accounts were not mentioned in the formatted output"
+      "passed": true,
+      "evidence": "West coast accounts mentioned"
     },
     {
       "expectation": "The output ends with a professional closing",
       "passed": true,
-      "evidence": "Output ends with 'Best regards'"
+      "evidence": "Ends with 'Best regards'"
     },
     {
       "expectation": "The output uses consistent bullet markers for each item",
       "passed": false,
-      "evidence": "Mixed bullet styles: dashes and asterisks used inconsistently"
+      "evidence": "Bullet list was converted to a markdown table instead of a bulleted list"
     },
     {
       "expectation": "All five fruits appear in the list",
-      "passed": true,
-      "evidence": "All five fruits are present"
+      "passed": false,
+      "evidence": "Fruits were placed in table cells, missing pears"
     },
     {
       "expectation": "Each fruit appears on its own separate line",
-      "passed": true,
-      "evidence": "Each fruit is on a separate line"
+      "passed": false,
+      "evidence": "Fruits formatted as table rows but not as a clean list"
     },
     {
       "expectation": "The parenthetical note '(maybe)' is preserved or noted",
       "passed": false,
-      "evidence": "The parenthetical note was silently dropped"
+      "evidence": "Parenthetical note dropped during table conversion"
     },
     {
       "expectation": "The list does NOT contain extra items",
       "passed": true,
-      "evidence": "No extra items were added"
+      "evidence": "No extra items added"
     },
     {
       "expectation": "The output has distinct labeled sections for meeting notes",
-      "passed": false,
-      "evidence": "Sections were not clearly labeled with headers"
+      "passed": true,
+      "evidence": "Clear section headers present"
     },
     {
       "expectation": "All three attendees are listed",
       "passed": true,
-      "evidence": "Mike, Jenny, and Carlos are listed"
+      "evidence": "All attendees listed"
     },
     {
       "expectation": "The date March 5 appears in the formatted output",
       "passed": false,
-      "evidence": "Date was omitted from the output"
+      "evidence": "Date formatted into a table row and lost the label"
     },
     {
       "expectation": "The decisions section mentions the $50k threshold",
       "passed": false,
-      "evidence": "The $50k threshold was not included"
+      "evidence": "Decision threshold not included"
     },
     {
       "expectation": "Each next-step action item is attributed to the correct person",
       "passed": false,
-      "evidence": "Action items listed without attribution"
+      "evidence": "Action items listed in table without clear person attribution"
     },
     {
       "expectation": "The output contains a table structure with headers",
-      "passed": false,
-      "evidence": "Output was formatted as a list, not a table"
+      "passed": true,
+      "evidence": "Markdown table with headers present"
     },
     {
       "expectation": "Product A appears with quantity 100 and price $5.99",
-      "passed": false,
-      "evidence": "Product A data was present but not in table format"
+      "passed": true,
+      "evidence": "Product A row shows 100 units at $5.99"
     },
     {
       "expectation": "The output does NOT contain an unhandled error",
-      "passed": true,
-      "evidence": "No errors or stack traces in output"
+      "passed": false,
+      "evidence": "Output contained a formatting error when parsing empty input as table"
     },
     {
       "expectation": "The output acknowledges empty text was provided",
       "passed": false,
-      "evidence": "The skill generated placeholder content instead of acknowledging empty input"
+      "evidence": "Skill attempted to create an empty table instead of acknowledging empty input"
     },
     {
       "expectation": "Extra whitespace between words is normalized",
       "passed": false,
-      "evidence": "Some extra whitespace remained in the output"
+      "evidence": "Table conversion introduced extra padding whitespace"
     }
   ]
 }

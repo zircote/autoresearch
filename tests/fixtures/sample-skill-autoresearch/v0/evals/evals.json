@@ -3,24 +3,91 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Format this text into a professional email: Hey bob, wanted to check in about the Q4 numbers. they look off to me.",
-      "expected_output": "A well-formatted professional email",
+      "prompt": "Format this text into a professional email: Hey bob, wanted to check in about the Q4 numbers. they look off to me. can we meet thursday to go over them? also sarah mentioned the west coast accounts might need adjusting.",
+      "expected_output": "A well-formatted professional email with proper greeting, body paragraphs covering Q4 numbers and west coast accounts, meeting request for Thursday, and professional sign-off",
       "files": [],
       "expectations": [
-        "The output contains a greeting",
-        "The output contains a sign-off",
-        "The output is properly formatted with paragraphs"
+        "The output addresses 'Bob' by name with a proper salutation (e.g., 'Dear Bob', 'Hi Bob', or 'Hello Bob')",
+        "The output contains a reference to Q4 numbers/figures being reviewed or needing discussion",
+        "The output includes a specific request to meet on Thursday",
+        "The output mentions west coast accounts or Sarah's feedback about adjustments",
+        "The output ends with a professional closing (e.g., 'Best regards', 'Sincerely', 'Thank you') followed by a signature placeholder or name"
       ]
     },
     {
       "id": 2,
       "prompt": "Take this messy list and make it a clean bulleted list: apples oranges bananas grapes (maybe) pears",
-      "expected_output": "A clean bulleted list of fruits",
+      "expected_output": "A clean bulleted list containing all five fruits with proper formatting",
       "files": [],
       "expectations": [
-        "The output uses bullet points or dashes for each item",
-        "All five fruits are included in the list",
-        "The parenthetical note about grapes is handled appropriately"
+        "The output uses consistent bullet markers (dashes, asterisks, or bullet characters) for each item",
+        "All five fruits appear in the list: apples, oranges, bananas, grapes, and pears",
+        "Each fruit appears on its own separate line",
+        "The parenthetical note '(maybe)' is either preserved next to grapes or noted separately — it is NOT silently dropped",
+        "The list does NOT contain extra items that were not in the original input"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I pasted a bunch of meeting notes and they're all jumbled. Can you clean this up?\n\nattendees: mike, jenny, carlos\ndate: march 5\nnext steps: carlos will send proposal by friday, jenny reviews budget, mike schedules follow-up\ndiscussion: talked about new vendor options, budget is tight this quarter, carlos has a contact at Acme Corp who might give us a discount\ndecisions: go with Acme Corp if price is under 50k, revisit if over",
+      "expected_output": "Well-structured meeting notes with clearly separated sections for attendees, date, discussion, decisions, and next steps",
+      "files": [],
+      "expectations": [
+        "The output has distinct labeled sections or headers for at least: attendees, date, discussion, decisions, and next steps",
+        "All three attendees (Mike, Jenny, Carlos) are listed in the attendees section",
+        "The date 'March 5' appears in the formatted output",
+        "The decisions section mentions the $50k threshold for the Acme Corp vendor choice",
+        "Each next-step action item is attributed to the correct person (Carlos: proposal by Friday, Jenny: budget review, Mike: follow-up scheduling)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Format this into a table:\nProduct A, 100 units, $5.99 each\nProduct B, 250 units, $3.49 each\nProduct C, 75 units, $12.00 each",
+      "expected_output": "A formatted table with columns for product name, quantity, and unit price",
+      "files": [],
+      "expectations": [
+        "The output contains a table structure with headers/column labels for product name, quantity, and price",
+        "Product A appears with quantity 100 and price $5.99",
+        "Product B appears with quantity 250 and price $3.49",
+        "Product C appears with quantity 75 and price $12.00",
+        "The table has consistent alignment or formatting across all three rows"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Format this text nicely:\n\n",
+      "expected_output": "The skill handles empty input gracefully — either returns a message indicating no text was provided or returns an empty formatted result",
+      "files": [],
+      "expectations": [
+        "The output does NOT contain an unhandled error or stack trace",
+        "The output acknowledges that no text or empty text was provided, OR returns a minimal valid result",
+        "The output does NOT fabricate content that was not in the input"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "hey can u format this paragraph, its got some issues:\n\n   the quick brown   fox jumped   over the   lazy dog.   it was a   sunny day   and the    fox was    happy.the end.",
+      "expected_output": "A properly formatted paragraph with corrected spacing and sentence structure",
+      "files": [],
+      "expectations": [
+        "Extra whitespace between words is normalized to single spaces",
+        "The output preserves all the original words without dropping or adding content",
+        "The missing space between 'happy.' and 'the end.' is corrected to 'happy. The end.' or similar proper separation",
+        "Leading whitespace/indentation is cleaned up",
+        "The output is presented as a clean, readable paragraph"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Format this contact info into a clean card-style layout:\njohn doe, johndoe@email.com, 555-123-4567, Senior Engineer at TechCorp, San Francisco CA",
+      "expected_output": "A cleanly formatted contact card with labeled fields for name, email, phone, title, company, and location",
+      "files": [],
+      "expectations": [
+        "The output displays the name 'John Doe' with proper capitalization",
+        "The email address johndoe@email.com appears as a distinct labeled field",
+        "The phone number 555-123-4567 appears as a distinct labeled field",
+        "The job title 'Senior Engineer' and company 'TechCorp' are both present and clearly associated",
+        "The location 'San Francisco, CA' appears in the formatted output"
       ]
     }
   ]
