@@ -205,13 +205,38 @@ Improve the candidate skill to achieve higher eval pass rates.
 
 **3d. Log** — Append to results.tsv
 
+**3d½. Update Dashboard** — Regenerate the HTML dashboard after each iteration so it can be viewed mid-loop:
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${SCRIPTS_DIR}')
+from dashboard import generate_dashboard; from pathlib import Path
+html = generate_dashboard(Path('${WORKSPACE}'))
+Path('${WORKSPACE}/dashboard.html').write_text(html)
+print('Dashboard updated: ${WORKSPACE}/dashboard.html')
+"
+```
+
 **3e. Check Abort Conditions**:
 - `best_score >= 1.0` → Stop (perfect)
 - Last 3 actions all "reverted" → Stop (stuck)
 
 ### Step 4: Finalize
 
-1. Spawn convergence reporter (read `agents/convergence-reporter.md`):
+1. Generate final dashboard and copy to a persistent location (before workspace cleanup):
+   ```bash
+   python3 -c "
+   import sys; sys.path.insert(0, '${SCRIPTS_DIR}')
+   from dashboard import generate_dashboard; from pathlib import Path
+   html = generate_dashboard(Path('${WORKSPACE}'))
+   Path('${WORKSPACE}/dashboard.html').write_text(html)
+   # Copy to sibling of skill so it survives workspace cleanup
+   out = Path('${skill_path}').parent / '$(basename ${skill_path})-dashboard.html'
+   out.write_text(html)
+   print(f'Dashboard saved: {out}')
+   "
+   ```
+
+2. Spawn convergence reporter (read `agents/convergence-reporter.md`):
    ```
    You are a convergence reporter. Read and follow:
    ${PLUGIN_ROOT}/skills/autoresearch/agents/convergence-reporter.md
@@ -220,11 +245,12 @@ Improve the candidate skill to achieve higher eval pass rates.
    - workspace: ${WORKSPACE}
    - v0_path: ${WORKSPACE}/v0/
    - best_path: ${WORKSPACE}/v{best_version}/
+   - dashboard_path: ${skill_path}/../$(basename ${skill_path})-dashboard.html
    ```
 
-2. Show the report and diff to the user
-3. Ask: "Apply the best version (v{N}, score {S}) to the original skill? [y/n]"
-4. If confirmed:
+3. Show the report and diff to the user
+4. Ask: "Apply the best version (v{N}, score {S}) to the original skill? [y/n]"
+5. If confirmed:
    ```bash
    python3 -c "
    import sys; sys.path.insert(0, '${SCRIPTS_DIR}')
@@ -233,7 +259,7 @@ Improve the candidate skill to achieve higher eval pass rates.
    "
    ```
 
-5. **Clean up workspace** — always remove the workspace after finalization, regardless of whether changes were applied:
+6. **Clean up workspace** — always remove the workspace after finalization, regardless of whether changes were applied:
    ```bash
    rm -rf "${WORKSPACE}"
    ```
@@ -270,6 +296,18 @@ Read `results.tsv` to determine the best version number before spawning.
 
 The report MUST display every iteration present in `results.tsv` — show the complete score trajectory table with all rows. For each iteration, show the score, best score, action (kept/reverted/baseline), and changelog summary. If a version was reverted, explicitly state it was reverted and why. If a version was kept, state the score improvement (e.g., "score improved from X to Y").
 
+Generate the HTML dashboard first:
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${SCRIPTS_DIR}')
+from dashboard import generate_dashboard; from pathlib import Path
+html = generate_dashboard(Path('${workspace_path}'))
+out = Path('${workspace_path}/dashboard.html')
+out.write_text(html)
+print(f'Dashboard: {out}')
+"
+```
+
 Spawn the convergence reporter (read `agents/convergence-reporter.md`):
 
 ```
@@ -280,6 +318,7 @@ Inputs:
 - workspace: ${workspace_path}
 - v0_path: ${workspace_path}/v0/
 - best_path: ${workspace_path}/v{best_version}/
+- dashboard_path: ${workspace_path}/dashboard.html
 ```
 
 ---

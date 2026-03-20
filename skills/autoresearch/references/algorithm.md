@@ -114,6 +114,9 @@ FOR i IN 1..max_iterations:
   append(results.tsv, {iteration: i, score: score_i, best_score: best.score,
                         action: action, changelog: improver.changelog})
 
+  # Update dashboard (viewable mid-loop)
+  write(workspace/dashboard.html, generate_dashboard(workspace))
+
   # ABORT CONDITIONS
   IF best.score >= 1.0:
     BREAK  # Perfect score achieved
@@ -126,11 +129,18 @@ FOR i IN 1..max_iterations:
 
 ```
 FINALIZE:
+  # Generate HTML dashboard (before cleanup — workspace is about to be removed)
+  dashboard_html = generate_dashboard(workspace)
+  write(workspace/dashboard.html, dashboard_html)
+  dashboard_out = skill_path/../{skill_name}-dashboard.html
+  write(dashboard_out, dashboard_html)
+
   # Generate convergence report
   spawn convergence_reporter(
     workspace = workspace,
     v0_path = workspace/v0/,
-    best_path = workspace/v{best.version}/
+    best_path = workspace/v{best.version}/,
+    dashboard_path = dashboard_out
   )
 
   # Show diff between baseline and best

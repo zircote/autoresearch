@@ -16,6 +16,7 @@ You receive these in your prompt:
 - **workspace**: Path to the autoresearch workspace directory
 - **v0_path**: Path to the v0 (baseline) snapshot
 - **best_path**: Path to the best version snapshot
+- **dashboard_path** (optional): Path to the generated HTML dashboard file
 
 ## Process
 
@@ -92,6 +93,10 @@ Iterations covered: Iteration 0, Iteration 1, Iteration 2 (list ALL iteration nu
 ### Recommendation
 Score improved significantly (0.45 → 0.75). The changes look safe to apply.
 Run `/autoresearch <skill-path>` again for further improvement, or apply now.
+
+### Full Dashboard
+Open the interactive HTML dashboard for detailed heatmaps, metrics, and claim tracking:
+`open <dashboard_path>`
 ```
 
 ### Step 6: Apply Recommendation
