@@ -8,6 +8,8 @@ argument-hint: [--eval-doctor | --report | --iterations N] <skill-path>
 
 Autonomous skill improvement loop. Modify → evaluate → keep/discard → repeat.
 
+**CRITICAL: This skill MUST actually execute all commands and create real files on disk.** Do NOT simulate, describe, or document what "would" happen. Every `mkdir`, `python3`, `rm`, and file write must be a real tool invocation that produces real filesystem artifacts. If a step says "create directory X," you must run `mkdir -p X` via a Bash tool call and verify it exists. Transcripts must reflect actual execution, not hypothetical walkthroughs.
+
 ## Mode Detection
 
 Parse the user's input to determine which mode to run:
@@ -56,6 +58,8 @@ Read `references/algorithm.md` for the complete specification. Summary below.
 
 ### Step 1: Initialize Workspace
 
+Run these commands via Bash tool calls (do NOT just describe them — actually execute them):
+
 ```bash
 WORKSPACE="${skill_path}/../$(basename ${skill_path})-autoresearch"
 mkdir -p "${WORKSPACE}"
@@ -94,20 +98,22 @@ mkdir -p "${WORKSPACE}"
 
 ### Step 2: Evaluate Candidate
 
+**CRITICAL: Each eval execution MUST produce visible tool calls in the transcript.** The eval subagent must actually run Bash commands, read files, and write outputs using real tool invocations. The transcript must show these tool calls — not narrative summaries like "Eval 1: scored 4/5". If the transcript only contains descriptions of what happened without visible Bash/Read/Write tool calls for each eval, the evaluation is invalid.
+
 For each eval case in `evals/evals.json`:
 
-1. Create run directory: `${WORKSPACE}/iteration-{i}/eval-{id}/`
-2. Create `outputs/` subdirectory
-3. Execute the eval by spawning a subagent:
+1. Create run directory via Bash: `mkdir -p ${WORKSPACE}/iteration-{i}/eval-{id}/outputs/`
+2. Execute the eval by spawning a subagent (Agent or Task tool). The subagent MUST use real tool calls (Bash, Read, Write, Edit) to execute the skill and produce outputs — every step must be a visible tool invocation in the transcript, not a narrated summary:
 
 ```
-Execute this task:
+Execute this task using REAL tool calls (Bash, Read, Write). Every action must be a visible tool invocation, not a description.
 - Read the skill at: ${WORKSPACE}/candidate/SKILL.md
 - Follow the skill's instructions to accomplish this task: {eval_case.prompt}
 - Input files: {eval_case.files or "none"}
 - Deterministic checks: {eval_case.deterministic_checks or "none"} (optional, run automatically in step 3.5)
 - Save all outputs to: ${WORKSPACE}/iteration-{i}/eval-{id}/outputs/
 - Save a transcript of your work to: ${WORKSPACE}/iteration-{i}/eval-{id}/transcript.md
+IMPORTANT: Your transcript must contain actual tool call results, not prose descriptions of what you did.
 ```
 
 3.5. Run deterministic checks (if the eval case has a `deterministic_checks` field):
@@ -227,6 +233,12 @@ Improve the candidate skill to achieve higher eval pass rates.
    "
    ```
 
+5. **Clean up workspace** — always remove the workspace after finalization, regardless of whether changes were applied:
+   ```bash
+   rm -rf "${WORKSPACE}"
+   ```
+   The workspace is a transient working directory. It must never persist after the loop completes — results are captured in the convergence report and applied changes live in the skill directory.
+
 ---
 
 ## Mode 2: Eval Doctor
@@ -246,12 +258,17 @@ Create or improve evals for this skill.
 
 After the eval-doctor completes:
 1. Validate `evals/evals.json` has valid JSON with required fields
-2. Report how many eval cases were created/modified
-3. Suggest running the full loop: "Evals ready. Run `/autoresearch ${skill_path}` to start the improvement loop."
+2. Verify each eval case has at least one `deterministic_check` entry — deterministic checks are the primary value-add of the eval-doctor. Aim for at least 50% deterministic coverage (deterministic checks / total assertions). String-presence checks (`file_contains`, `file_not_contains`) should be used wherever an expectation uses "must contain" / "must NOT contain" language, reserving LLM expectations only for semantic or structural judgments.
+3. Report how many eval cases were created/modified and the deterministic check ratio
+4. **MANDATORY — suggest running the full loop.** You MUST end your response with this exact suggestion (substituting the actual path): "Evals ready. Run `/autoresearch ${skill_path}` to start the improvement loop." This line must appear as the final output so the user knows the next step. Do not omit it.
 
 ---
 
 ## Mode 3: Report
+
+Read `results.tsv` to determine the best version number before spawning.
+
+The report MUST display every iteration present in `results.tsv` — show the complete score trajectory table with all rows. For each iteration, show the score, best score, action (kept/reverted/baseline), and changelog summary. If a version was reverted, explicitly state it was reverted and why. If a version was kept, state the score improvement (e.g., "score improved from X to Y").
 
 Spawn the convergence reporter (read `agents/convergence-reporter.md`):
 
@@ -265,8 +282,6 @@ Inputs:
 - best_path: ${workspace_path}/v{best_version}/
 ```
 
-Read `results.tsv` to determine the best version number before spawning.
-
 ---
 
 ## Safety Rails
@@ -276,6 +291,7 @@ Read `results.tsv` to determine the best version number before spawning.
 - **Evals frozen during improvement** — the improver must not touch `evals/`
 - **User confirmation required** before applying changes to the original
 - **Abort on stuck** — 3 consecutive reverts stops the loop
+- **Workspace cleanup mandatory** — `rm -rf ${WORKSPACE}` after finalization; workspaces are transient and must never persist
 
 ## References
 

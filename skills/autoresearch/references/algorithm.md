@@ -140,8 +140,9 @@ FINALIZE:
   IF user confirms:
     restore(workspace/v{best.version}/ → skill_path)
     # Original skill is now updated
-  ELSE:
-    # Changes remain in workspace for manual review
+
+  # Always clean up workspace — it is transient and must not persist
+  rm -rf workspace/
 ```
 
 ## Three Modes
@@ -172,6 +173,7 @@ Spawns the convergence reporter on an existing workspace. Use to review results 
 4. **SHA-compare before write** — snapshot() skips unchanged files
 5. **User confirmation required** — changes are only applied to the original after explicit approval
 6. **Regression abort** — 3 consecutive reverts stops the loop to prevent wasted computation
+7. **Workspace cleanup mandatory** — the workspace directory is removed after finalization; it must never persist on disk or be committed
 
 ## Score Computation
 

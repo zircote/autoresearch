@@ -6,13 +6,68 @@
       "prompt": "I have a skill at tests/fixtures/sample-skill/ that's not performing well. Run autoresearch on it to improve it. Use 2 iterations max.",
       "expected_output": "Creates a workspace, snapshots the skill, attempts to run the improvement loop with evaluation and keep/discard logic",
       "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_exists",
+          "file": "transcript.md",
+          "description": "Transcript file was created in the outputs directory"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "mkdir",
+          "description": "Transcript contains evidence of mkdir execution (workspace creation)"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "snapshot",
+          "description": "Transcript references the snapshot operation"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "v0",
+          "description": "Transcript references the v0 baseline directory"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "candidate",
+          "description": "Transcript references the candidate working copy"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "results.tsv",
+          "description": "Transcript references results logging"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "evals.json",
+          "description": "Transcript references the evals file for grading"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(score|Score|pass_rate).*[0-9]",
+          "description": "Transcript contains a numeric score or pass rate from evaluation"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(kept|reverted|discard|Kept|Reverted|Discard)",
+          "description": "Transcript contains keep/discard decision language"
+        }
+      ],
       "expectations": [
         "Creates a workspace directory named sample-skill-autoresearch as a sibling to the skill",
         "Snapshots the original skill to a v0 directory in the workspace",
         "Creates a candidate copy of the skill in the workspace",
-        "Attempts to locate the skill-creator plugin for grading",
+        "Runs the evaluation step with actual tool calls (Bash commands visible in transcript), not just descriptions of what would happen",
         "Checks for evals/evals.json in the skill directory",
-        "References or uses the snapshot.py script for copying"
+        "The keep/discard decision is based on comparing the new score against the best score"
       ]
     },
     {
@@ -20,12 +75,85 @@
       "prompt": "Run autoresearch in eval-doctor mode on tests/fixtures/sample-skill/ — it needs proper evaluation cases created.",
       "expected_output": "Detects eval-doctor mode, analyzes the sample skill, and creates evals/evals.json with well-structured evaluation cases",
       "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_exists",
+          "file": "evals.json",
+          "description": "Output evals.json file was created"
+        },
+        {
+          "type": "json_valid",
+          "file": "evals.json",
+          "description": "Output evals.json is valid JSON"
+        },
+        {
+          "type": "json_field_exists",
+          "file": "evals.json",
+          "path": ".skill_name",
+          "description": "evals.json has a skill_name field"
+        },
+        {
+          "type": "json_field_equals",
+          "file": "evals.json",
+          "path": ".skill_name",
+          "expected": "sample-skill",
+          "description": "skill_name matches the target skill name"
+        },
+        {
+          "type": "json_field_exists",
+          "file": "evals.json",
+          "path": ".evals",
+          "description": "evals.json has an evals array"
+        },
+        {
+          "type": "json_field_count",
+          "file": "evals.json",
+          "path": ".evals",
+          "op": "gte",
+          "expected": 3,
+          "description": "evals array has at least 3 eval cases (minimum for reliable signal)"
+        },
+        {
+          "type": "json_field_exists",
+          "file": "evals.json",
+          "path": ".evals[0].id",
+          "description": "First eval case has an id field"
+        },
+        {
+          "type": "json_field_exists",
+          "file": "evals.json",
+          "path": ".evals[0].prompt",
+          "description": "First eval case has a prompt field"
+        },
+        {
+          "type": "json_field_exists",
+          "file": "evals.json",
+          "path": ".evals[0].expectations",
+          "description": "First eval case has an expectations field"
+        },
+        {
+          "type": "json_field_matches",
+          "file": "evals.json",
+          "path": ".evals[0].prompt",
+          "pattern": ".{30,}",
+          "description": "First eval prompt is non-trivially long (at least 30 chars)"
+        },
+        {
+          "type": "shell_command",
+          "command": "python3 -c \"import json; d=json.load(open('evals.json')); evals=d.get('evals',[]); det_count=sum(1 for e in evals if e.get('deterministic_checks',[])); print(f'{det_count}/{len(evals)} evals have deterministic_checks'); exit(0 if det_count>0 else 1)\"",
+          "description": "At least one eval case has deterministic_checks defined"
+        },
+        {
+          "type": "shell_command",
+          "command": "python3 -c \"import json; d=json.load(open('evals.json')); evals=d.get('evals',[]); all_ok=all(all(k in e for k in ['id','prompt','expectations']) for e in evals); print('All evals have required fields' if all_ok else 'Missing fields'); exit(0 if all_ok else 1)\"",
+          "description": "Every eval case has required fields: id, prompt, expectations"
+        }
+      ],
       "expectations": [
         "Detects eval-doctor mode from the user input",
         "Reads the sample skill's SKILL.md to understand what it does",
-        "Creates or references evals/evals.json with valid JSON schema",
-        "Each eval case includes id, prompt, expected_output, and expectations fields",
-        "The generated eval prompts are realistic and specific, not generic",
+        "Generated eval prompts are realistic and specific to text formatting, not generic placeholders",
+        "Each eval case has expectations that are discriminating (would fail for wrong output)",
         "Suggests running the full improvement loop after evals are ready"
       ]
     },
@@ -34,13 +162,67 @@
       "prompt": "Show me the autoresearch convergence report for the workspace at tests/fixtures/sample-skill-autoresearch/",
       "expected_output": "Reads results.tsv and grading files, produces a convergence report with score trajectory table and recommendation",
       "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_exists",
+          "file": "convergence-report.md",
+          "description": "Convergence report file was created"
+        },
+        {
+          "type": "file_contains",
+          "file": "convergence-report.md",
+          "literal": "0.45",
+          "description": "Report contains the baseline score 0.45 from results.tsv"
+        },
+        {
+          "type": "file_contains",
+          "file": "convergence-report.md",
+          "literal": "0.67",
+          "description": "Report contains the iteration 1 score 0.67 from results.tsv"
+        },
+        {
+          "type": "file_contains",
+          "file": "convergence-report.md",
+          "literal": "0.50",
+          "description": "Report contains the iteration 2 score 0.50 from results.tsv"
+        },
+        {
+          "type": "regex_match",
+          "file": "convergence-report.md",
+          "pattern": "[Kk]ept|[Ii]mproved",
+          "description": "Report mentions that iteration 1 was kept or improved"
+        },
+        {
+          "type": "regex_match",
+          "file": "convergence-report.md",
+          "pattern": "[Rr]evert|[Dd]iscard",
+          "description": "Report mentions that iteration 2 was reverted or discarded"
+        },
+        {
+          "type": "regex_match",
+          "file": "convergence-report.md",
+          "pattern": "[Ii]teration.*0.*[Ii]teration.*1.*[Ii]teration.*2|0\\s.*1\\s.*2|#.*0.*#.*1.*#.*2",
+          "description": "Report shows all three iterations (0, 1, 2) in order"
+        },
+        {
+          "type": "file_contains",
+          "file": "convergence-report.md",
+          "literal": "v1",
+          "description": "Report references v1 as the best version"
+        },
+        {
+          "type": "regex_match",
+          "file": "convergence-report.md",
+          "pattern": "[Rr]ecommend|[Ss]uggest|[Aa]pply|[Nn]ext",
+          "description": "Report contains a recommendation or next-steps section"
+        }
+      ],
       "expectations": [
         "Detects report mode from the user input",
         "Reads results.tsv from the workspace directory",
-        "Displays a score trajectory showing iterations 0, 1, and 2",
-        "Shows that iteration 1 was kept (score improved from 0.45 to 0.67) and iteration 2 was reverted",
-        "Includes a recommendation about whether to apply changes or continue",
-        "References or uses the diff_report.py script to compare v0 vs best version"
+        "Displays a score trajectory showing all three iterations with their scores",
+        "Shows that iteration 1 was kept (score improved from 0.45 to 0.67) and iteration 2 was reverted (score dropped to 0.50)",
+        "Includes a recommendation about whether to apply changes or continue iterating"
       ]
     }
   ]

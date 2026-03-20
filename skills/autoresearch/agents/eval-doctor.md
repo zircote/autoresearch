@@ -163,3 +163,4 @@ Report to the orchestrator:
 1. Number of eval cases created/modified
 2. Summary of what each eval tests
 3. Any concerns about eval coverage gaps
+4. **MANDATORY**: End your response with this exact line (substituting the real path): "Evals ready. Run `/autoresearch <skill-path>` to start the improvement loop." This suggestion MUST appear as the final line of your output — it tells the user what to do next and is a required part of the eval-doctor workflow.

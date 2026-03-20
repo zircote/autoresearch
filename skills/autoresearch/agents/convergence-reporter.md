@@ -23,12 +23,16 @@ You receive these in your prompt:
 
 1. Read `results.tsv` from the workspace
 2. Parse each row: iteration, timestamp, score, best_score, action (kept/reverted), changelog
+3. **Display ALL iterations** found in results.tsv — the trajectory table must include every row, not just a subset. This is critical for the report's accuracy.
+4. **Include a single-line iteration summary** above the trajectory table in the format: "Iterations covered: Iteration 0, Iteration 1, Iteration 2" (listing every iteration number). This line must appear on one line so it can be scanned quickly. This is required — do not omit it.
 
 ### Step 2: Compute Trajectory
 
 1. Track score progression: starting score, peak score, final best score
 2. Count: total iterations, kept iterations, reverted iterations
-3. Identify convergence pattern:
+3. For each kept iteration, explicitly state the score improvement: "score improved from {previous_best} to {new_score}"
+4. For each reverted iteration, explicitly state it was reverted and why the score regressed
+5. Identify convergence pattern:
    - **Rapid improvement**: Most iterations kept, score rose quickly
    - **Plateau**: Score stopped improving after initial gains
    - **Stuck**: 3+ consecutive reverts (the abort condition)
@@ -62,6 +66,9 @@ Present to the user:
 ## Autoresearch Convergence Report
 
 ### Score Trajectory
+
+Iterations covered: Iteration 0, Iteration 1, Iteration 2 (list ALL iteration numbers on this single line)
+
 | Iteration | Score | Best | Action | Summary |
 |-----------|-------|------|--------|---------|
 | 0 (baseline) | 0.45 | 0.45 | — | Initial evaluation |
