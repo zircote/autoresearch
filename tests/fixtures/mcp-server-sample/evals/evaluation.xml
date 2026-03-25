@@ -1,0 +1,14 @@
+<evaluation>
+   <qa_pair id="1">
+      <question>What is the capital of France?</question>
+      <answer>Paris</answer>
+   </qa_pair>
+   <qa_pair id="2">
+      <question>What is 2 + 2?</question>
+      <answer>4</answer>
+   </qa_pair>
+   <qa_pair id="3">
+      <question>What color is the sky on a clear day?</question>
+      <answer>Blue</answer>
+   </qa_pair>
+</evaluation>

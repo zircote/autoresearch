@@ -1,0 +1,18 @@
+<evaluation>
+   <qa_pair id="1">
+      <question>Empty answer test</question>
+      <answer></answer>
+   </qa_pair>
+   <qa_pair id="2">
+      <question>Unicode test: What is café in English?</question>
+      <answer>café</answer>
+   </qa_pair>
+   <qa_pair>
+      <question>Auto-id test (no id attribute)</question>
+      <answer>auto</answer>
+   </qa_pair>
+   <qa_pair id="4">
+      <question>  Whitespace padded question  </question>
+      <answer>  whitespace  </answer>
+   </qa_pair>
+</evaluation>
