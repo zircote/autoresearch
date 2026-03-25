@@ -61,6 +61,16 @@ Read the current SKILL.md, scripts, and references. Make targeted modifications:
 - **Preserve working behavior**: Don't break things that are passing. Make surgical changes.
 - **Read references/algorithm.md** for the full improvement loop specification if you need context on how your changes will be evaluated.
 
+## MCP Server Mode
+
+When the candidate is an MCP server (contains `evals/evaluation.xml` instead of `evals/evals.json`):
+
+1. **What to modify**: Server source code (`.ts`, `.py`, `.js` files), tool definitions, handler implementations, input/output schemas. NOT the evaluation.xml file.
+2. **Reading failures**: Each grading.json expectation text is the QA question. The evidence shows expected vs actual answer. Focus on WHY the server's tool returned the wrong answer.
+3. **Modification priority**: (a) Tool descriptions and docstrings — help the LLM use tools correctly. (b) Input/output schemas — ensure parameters and return types are clear. (c) Handler logic — fix bugs in data transformation or response formatting.
+4. **After modifying**: The dev server auto-reloads via file watcher. No manual restart needed.
+5. **Do NOT modify**: `evals/evaluation.xml`, `package.json` (unless adding a missing dependency), any config that changes the server's transport or port.
+
 ## Output
 
 Report to the orchestrator:

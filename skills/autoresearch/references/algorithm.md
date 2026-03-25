@@ -82,6 +82,44 @@ For each eval case:
 5. Spawn grader with: expectations, transcript_path, outputs_dir
 6. Grader writes `run_dir/grading.json`
 
+### MCP Evaluation Variant
+
+When `ARTIFACT_TYPE=mcp-server`, the evaluation procedure uses QA pairs instead of skill evals:
+
+```
+FUNCTION evaluate_mcp(candidate_path):
+  qa_pairs = parse_evaluation_xml(candidate_path/evals/evaluation.xml)
+
+  FOR EACH qa IN qa_pairs:
+    run_dir = workspace/iteration-{i}/eval-{qa.id}/
+    mkdir(run_dir/outputs/)
+
+    # Spawn subagent with MCP tools to answer the question
+    answer = mcp_subagent(qa.question)
+    write(run_dir/outputs/answer.txt, answer)
+
+    # Deterministic grading: exact string match
+    passed = normalize(answer) == normalize(qa.expected_answer)
+    write(run_dir/grading.json, {
+      expectations: [{text: qa.question, passed, evidence, source: 'deterministic'}],
+      summary: {passed: int(passed), failed: int(!passed), total: 1,
+                pass_rate: float(passed)}
+    })
+
+  RETURN mean([g.summary.pass_rate for g in iteration_grading_files])
+```
+
+Key difference from skill evaluation: no LLM grader needed. QA pairs produce
+deterministic pass/fail via string comparison. The output layout
+(grading.json per eval in iteration-{i}/eval-{id}/) is identical to skill mode,
+so score computation, dashboard, and reporting are unchanged.
+
+### Artifact Type Detection
+
+The loop auto-detects artifact type at startup:
+- `evals/evaluation.xml` exists → MCP server mode (uses `evaluate_mcp`)
+- `evals/evals.json` exists → Skill mode (uses `evaluate`, the default)
+
 ## Main Loop
 
 ```

@@ -58,6 +58,31 @@ Write `evals/evals.json` following this schema:
 }
 ```
 
+### Step 3-MCP: Create MCP Evaluation (when target is an MCP server)
+
+If the target directory contains an MCP server (package.json with MCP-related deps, server source files, or no SKILL.md) rather than a skill, create `evals/evaluation.xml` instead of `evals/evals.json`:
+
+```xml
+<evaluation>
+   <qa_pair id="1">
+      <question>What does the get-weather tool return for location "Paris"? Provide just the temperature.</question>
+      <answer>22</answer>
+   </qa_pair>
+</evaluation>
+```
+
+**QA Pair Guidelines**:
+- Questions should exercise MCP tools with specific inputs
+- Expected answers must be exact strings (case-insensitive match after whitespace stripping)
+- Cover: happy path, edge cases, error handling, multi-tool combinations
+- Aim for 8-15 QA pairs for a typical MCP server
+- Expected answers must be deterministic — avoid answers that depend on external state, time, or randomness
+- Specify answer format in the question when ambiguous (e.g., "Answer as a number", "Respond True or False")
+
+See `references/mcp-eval-guide.md` for the full XML schema, examples, and anti-patterns.
+
+**After creating evaluation.xml, skip Steps 3b-4** — deterministic checks and LLM expectations are not used in MCP mode. All QA pairs are deterministic by design.
+
 ### Step 3b: Add Deterministic Checks
 
 For any expectation that can be verified programmatically, add a corresponding entry in the `deterministic_checks` array on the eval case. Deterministic checks produce zero-variance pass/fail results — the same output always gets the same grade.

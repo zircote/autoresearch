@@ -100,10 +100,10 @@ def collect_dashboard_data(workspace: Path) -> dict[str, Any]:
             "total_duration_seconds": 0.0,
         }
         for grading in evals.values():
-            em = grading.get("execution_metrics", {})
+            em = grading.get("execution_metrics") or {}
             for key in combined_metrics:
                 combined_metrics[key] += em.get(key, 0)
-            tm = grading.get("timing", {})
+            tm = grading.get("timing") or {}
             for key in combined_timing:
                 combined_timing[key] += tm.get(key, 0.0)
         metrics_timeline[iteration] = {

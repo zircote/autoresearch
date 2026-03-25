@@ -1,6 +1,6 @@
 ---
 name: autoresearch
-description: Autonomous skill improvement loop inspired by Karpathy's autoresearch pattern. Iteratively modifies skills, evaluates against fixed evals, keeps or discards changes to converge on higher quality. Includes eval management and convergence reporting. Use when users want to automatically improve a skill's quality, create or fix evals for a skill, or view improvement loop results. Triggers on "autoresearch", "improve skill automatically", "auto-improve", "skill improvement loop", "run improvement loop", "eval doctor", "fix evals", "create evals for skill", "skill quality", "autonomous improvement".
+description: Autonomous skill and MCP server improvement loop inspired by Karpathy's autoresearch pattern. Iteratively modifies skills or MCP server code, evaluates against fixed evals, keeps or discards changes to converge on higher quality. Supports skill evals (evals.json) and MCP server evals (evaluation.xml with QA pairs). Includes eval management and convergence reporting. Use when users want to automatically improve a skill's quality, improve an MCP server, create or fix evals for a skill or MCP server, or view improvement loop results. Triggers on "autoresearch", "improve skill automatically", "auto-improve", "skill improvement loop", "run improvement loop", "eval doctor", "fix evals", "create evals for skill", "skill quality", "autonomous improvement", "improve MCP server", "MCP eval".
 argument-hint: [--eval-doctor | --report | --iterations N] <skill-path>
 ---
 
@@ -19,7 +19,7 @@ Parse the user's input to determine which mode to run:
 3. **Report**: `/autoresearch --report <workspace-path>`
 
 Extract:
-- `skill_path`: Path to the skill directory (must contain SKILL.md)
+- `skill_path`: Path to the skill or MCP server directory
 - `mode`: One of `loop`, `eval-doctor`, `report`
 - `max_iterations`: Number of iterations (default: 5, max: 10)
 
@@ -33,9 +33,12 @@ SKILL_CREATOR=$(find ${CLAUDE_CONFIG_DIR:-${HOME}/.claude}/plugins/cache/claude-
 
 If not found, tell the user: "The skill-creator plugin is required. Install it with: `claude plugins add skill-creator`"
 
-Also verify the skill path:
-1. Check `{skill_path}/SKILL.md` exists
-2. Check `{skill_path}/evals/evals.json` exists (required for loop mode, eval-doctor can create it)
+Also verify the skill path and detect artifact type:
+1. If `{skill_path}/evals/evaluation.xml` exists → set `ARTIFACT_TYPE=mcp-server`
+   Else if `{skill_path}/evals/evals.json` exists → set `ARTIFACT_TYPE=skill`
+   Else → error: "No evals found. Run `/autoresearch --eval-doctor {skill_path}` to create them."
+2. For `ARTIFACT_TYPE=skill`: Check `{skill_path}/SKILL.md` exists
+3. For `ARTIFACT_TYPE=mcp-server`: Verify a server entry point exists (package.json, main .py/.ts file)
 
 ## Script Paths
 
@@ -97,6 +100,9 @@ mkdir -p "${WORKSPACE}"
    ```
 
 ### Step 2: Evaluate Candidate
+
+**If `ARTIFACT_TYPE=mcp-server`**: Use MCP QA evaluation (see Step 2-MCP below).
+**If `ARTIFACT_TYPE=skill`**: Use skill evaluation (this section).
 
 **CRITICAL: Each eval execution MUST produce visible tool calls in the transcript.** The eval subagent must actually run Bash commands, read files, and write outputs using real tool invocations. The transcript must show these tool calls — not narrative summaries like "Eval 1: scored 4/5". If the transcript only contains descriptions of what happened without visible Bash/Read/Write tool calls for each eval, the evaluation is invalid.
 
@@ -178,6 +184,77 @@ if det.exists() and grading.exists():
    print(compute_score(Path('${WORKSPACE}'), ${iteration}))
    "
    ```
+
+### Step 2-MCP: Evaluate Candidate (MCP Server Mode)
+
+When `ARTIFACT_TYPE=mcp-server`, use XML QA evaluation instead of skill evals:
+
+1. Parse the evaluation file:
+   ```bash
+   python3 -c "
+   import sys, json; sys.path.insert(0, '${SCRIPTS_DIR}')
+   from xml_eval_parser import parse_evaluation_xml
+   qa_pairs = parse_evaluation_xml('${WORKSPACE}/candidate/evals/evaluation.xml')
+   print(json.dumps(qa_pairs, indent=2))
+   "
+   ```
+
+2. For each QA pair, create the run directory and spawn a subagent that uses the MCP tools:
+   ```bash
+   mkdir -p ${WORKSPACE}/iteration-{i}/eval-{qa_id}/outputs/
+   ```
+
+   Spawn a subagent:
+   ```
+   You are evaluating an MCP server. Use the available MCP tools to answer this question.
+
+   Question: {qa_pair.question}
+
+   Think step by step. Use the MCP tools available to you.
+   When you have your final answer, write ONLY the answer (nothing else) to:
+   ${WORKSPACE}/iteration-{i}/eval-{qa_id}/outputs/answer.txt
+
+   Also save a transcript of your work to:
+   ${WORKSPACE}/iteration-{i}/eval-{qa_id}/transcript.md
+   ```
+
+3. After all QA pairs are evaluated, convert results to grading.json:
+   ```bash
+   python3 -c "
+   import sys, json; sys.path.insert(0, '${SCRIPTS_DIR}')
+   from xml_eval_parser import parse_evaluation_xml, write_per_question_grading
+   from pathlib import Path
+
+   qa_pairs = parse_evaluation_xml('${WORKSPACE}/candidate/evals/evaluation.xml')
+   results = []
+   for qa in qa_pairs:
+       answer_file = Path('${WORKSPACE}/iteration-${i}/eval-' + qa['id'] + '/outputs/answer.txt')
+       actual = answer_file.read_text().strip() if answer_file.exists() else ''
+       results.append({
+           'id': qa['id'], 'question': qa['question'],
+           'expected': qa['expected_answer'], 'actual': actual
+       })
+
+   write_per_question_grading(results, Path('${WORKSPACE}/iteration-${i}'))
+   from xml_eval_parser import qa_results_to_grading
+   summary = qa_results_to_grading(results)['summary']
+   print(f'MCP Eval: {summary[\"passed\"]}/{summary[\"total\"]} QA pairs correct')
+   "
+   ```
+
+4. Compute score using the SAME `score.py` (unchanged):
+   ```bash
+   python3 -c "
+   import sys; sys.path.insert(0, '${SCRIPTS_DIR}')
+   from score import compute_score; from pathlib import Path
+   print(compute_score(Path('${WORKSPACE}'), ${iteration}))
+   "
+   ```
+
+**Note**: After the improver modifies MCP server source code, wait for the dev server to reload before evaluating:
+```bash
+sleep ${RELOAD_DELAY_SECONDS:-3}
+```
 
 ### Step 3: Improvement Loop
 
@@ -283,9 +360,17 @@ Create or improve evals for this skill.
 ```
 
 After the eval-doctor completes:
+
+**If `ARTIFACT_TYPE=skill`** (default):
 1. Validate `evals/evals.json` has valid JSON with required fields
 2. Verify each eval case has at least one `deterministic_check` entry — deterministic checks are the primary value-add of the eval-doctor. Aim for at least 50% deterministic coverage (deterministic checks / total assertions). String-presence checks (`file_contains`, `file_not_contains`) should be used wherever an expectation uses "must contain" / "must NOT contain" language, reserving LLM expectations only for semantic or structural judgments.
 3. Report how many eval cases were created/modified and the deterministic check ratio
+
+**If `ARTIFACT_TYPE=mcp-server`**:
+1. Validate `evals/evaluation.xml` has valid XML with `<evaluation>/<qa_pair>` elements
+2. Verify each `<qa_pair>` has `<question>` and `<answer>` children
+3. Report QA pair count (aim for 8-15 pairs for a typical MCP server)
+
 4. **MANDATORY — suggest running the full loop.** You MUST end your response with this exact suggestion (substituting the actual path): "Evals ready. Run `/autoresearch ${skill_path}` to start the improvement loop." This line must appear as the final output so the user knows the next step. Do not omit it.
 
 ---
@@ -339,3 +424,4 @@ Inputs:
 - `agents/improver.md` — How the improver modifies skills
 - `agents/eval-doctor.md` — How the eval-doctor creates/fixes evals
 - `agents/convergence-reporter.md` — How convergence reports are generated
+- `references/mcp-eval-guide.md` — MCP server evaluation format and QA pair authoring guide
