@@ -102,10 +102,10 @@ def collect_dashboard_data(workspace: Path) -> dict[str, Any]:
         for grading in evals.values():
             em = grading.get("execution_metrics") or {}
             for key in combined_metrics:
-                combined_metrics[key] += em.get(key, 0)
+                combined_metrics[key] += em.get(key) or 0
             tm = grading.get("timing") or {}
             for key in combined_timing:
-                combined_timing[key] += tm.get(key, 0.0)
+                combined_timing[key] += tm.get(key) or 0.0
         metrics_timeline[iteration] = {
             "metrics": combined_metrics,
             "timing": combined_timing,
@@ -458,11 +458,11 @@ def _render_metrics(data: dict) -> str:
 
     # Only show if at least one iteration has non-zero metrics
     has_metrics = any(
-        mt["metrics"].get("total_tool_calls", 0) > 0
+        (mt["metrics"].get("total_tool_calls") or 0) > 0
         for mt in metrics_timeline.values()
     )
     has_timing = any(
-        mt["timing"].get("total_duration_seconds", 0) > 0
+        (mt["timing"].get("total_duration_seconds") or 0) > 0
         for mt in metrics_timeline.values()
     )
 
@@ -478,7 +478,7 @@ def _render_metrics(data: dict) -> str:
         for key, label in zip(metric_keys, metric_labels):
             cells = []
             for it in iterations:
-                val = metrics_timeline.get(it, {}).get("metrics", {}).get(key, 0)
+                val = metrics_timeline.get(it, {}).get("metrics", {}).get(key) or 0
                 cells.append(f"<td>{val:,}</td>")
             rows.append(f"<tr><td>{label}</td>{''.join(cells)}</tr>")
         parts.append(
@@ -500,7 +500,7 @@ def _render_metrics(data: dict) -> str:
         for key, label in zip(timing_keys, timing_labels):
             cells = []
             for it in iterations:
-                val = metrics_timeline.get(it, {}).get("timing", {}).get(key, 0.0)
+                val = metrics_timeline.get(it, {}).get("timing", {}).get(key) or 0.0
                 cells.append(f"<td>{val:.1f}</td>")
             rows.append(f"<tr><td>{label}</td>{''.join(cells)}</tr>")
         parts.append(
