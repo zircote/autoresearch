@@ -213,6 +213,15 @@ Spawns the eval-doctor agent to create/fix/improve evals. Does NOT run the impro
 ```
 Spawns the convergence reporter on an existing workspace. Use to review results after a run.
 
+## Empirical Observations
+
+Based on batch runs across multiple skills:
+
+- **Most improvements converge in iteration 1.** When the baseline isn't already perfect, a well-guided improver typically fixes all failures in a single pass. This is because skill eval failures tend to cluster around a few root causes (missing conditional paths, stale examples, missing data passthrough) rather than requiring iterative refinement.
+- **Zero-revert runs are common.** When the improver follows the root-cause-categories guidance and addresses ALL failures simultaneously, the improvement is almost always kept.
+- **Perfect baselines are common for structural evals.** Skills whose evals check for specific content/structure in SKILL.md (rather than runtime behavior) often score 100% at baseline because the content was written to match the evals.
+- **Iteration budget of 5 is sufficient.** No observed run has needed more than 2 iterations. The stuck-detection (3 consecutive reverts) has never triggered in practice.
+
 ## Safety Invariants
 
 1. **Original skill is never modified during the loop** — only workspace/candidate/ is mutable

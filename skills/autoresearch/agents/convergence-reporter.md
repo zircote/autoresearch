@@ -34,10 +34,12 @@ You receive these in your prompt:
 3. For each kept iteration, explicitly state the score improvement: "score improved from {previous_best} to {new_score}"
 4. For each reverted iteration, explicitly state it was reverted and why the score regressed
 5. Identify convergence pattern:
+   - **Single-iteration convergence**: Achieved perfect or near-perfect in iteration 1 — the most common pattern for well-structured skills with clear eval failures
    - **Rapid improvement**: Most iterations kept, score rose quickly
    - **Plateau**: Score stopped improving after initial gains
    - **Stuck**: 3+ consecutive reverts (the abort condition)
-   - **Perfect**: Achieved 1.0
+   - **Perfect baseline**: Already at 1.0 — no iterations needed
+   - **Perfect**: Achieved 1.0 during iteration
 
 ### Step 3: Generate Diff
 

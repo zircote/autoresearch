@@ -52,6 +52,22 @@ Read the current SKILL.md, scripts, and references. Make targeted modifications:
 2. Ensure no eval files were modified (check that evals/ directory is untouched)
 3. Report your changelog
 
+## Common Root Cause Categories
+
+Most skill failures fall into these patterns — check for them first:
+
+1. **Missing explicit conditional paths**: The skill describes the happy path but omits behavior for edge cases (e.g., "if results.tsv exists, compute trends" but no "if it doesn't exist, skip gracefully"). Fix: add explicit documentation for both branches.
+
+2. **Stale hardcoded examples**: The skill contains a hardcoded list or example that has drifted from reality (e.g., listing "17 domains" when there are now 20). Fix: replace with dynamic instructions ("iterate the profile's domain_weights keys") instead of static lists.
+
+3. **Missing data passthrough**: The skill reads data in one phase but doesn't pass it to the agent that needs it (e.g., extracting `search_patterns` from YAML but not including them in the assessor's task message). Fix: ensure every piece of data an agent needs is explicitly included in its task assignment.
+
+4. **Implicit output format**: The skill says "return an error" but doesn't provide a JSON template, so the model invents a format that fails deterministic checks. Fix: add explicit output templates for every output path including errors.
+
+5. **Narrow search scope**: The skill instructs "search ci.yml" when the relevant content is in a different workflow file. Fix: add broad discovery instructions ("list ALL files in .github/workflows/") before narrow searches.
+
+6. **Undocumented enrichment fields**: The skill describes some output fields but omits others that evals check for (e.g., `priority`, `confidence`). Fix: ensure every field that appears in the output schema is documented in the relevant phase.
+
 ## Constraints
 
 - **NEVER modify files in the evals/ directory** — evals are frozen during improvement
@@ -59,6 +75,7 @@ Read the current SKILL.md, scripts, and references. Make targeted modifications:
 - **Explain the why**: When adding instructions to SKILL.md, explain WHY the model should do something, not just WHAT. Models follow reasoned instructions better than arbitrary rules.
 - **Keep it lean**: Remove instructions that aren't working. If a section of SKILL.md consistently leads to wasted effort in transcripts, cut it.
 - **Preserve working behavior**: Don't break things that are passing. Make surgical changes.
+- **Be aggressive on iteration 1**: Empirically, most improvements converge in a single iteration. Don't make timid changes hoping to iterate — analyze ALL failures, identify their root causes, and fix them all in one pass.
 - **Read references/algorithm.md** for the full improvement loop specification if you need context on how your changes will be evaluated.
 
 ## MCP Server Mode
