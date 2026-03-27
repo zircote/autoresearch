@@ -336,7 +336,21 @@ print('Dashboard updated: ${WORKSPACE}/dashboard.html')
    "
    ```
 
-6. **Clean up workspace** — always remove the workspace after finalization, regardless of whether changes were applied:
+6. **Open and clean up dashboard** — the persistent dashboard copy is a viewing artifact, not a repo resource. Open it for the user, then offer to remove it:
+   ```bash
+   DASHBOARD_FILE="${skill_path}/../$(basename ${skill_path})-dashboard.html"
+   if [ -f "${DASHBOARD_FILE}" ]; then
+     open "${DASHBOARD_FILE}"
+   fi
+   ```
+   Ask: "Remove `$(basename ${skill_path})-dashboard.html`? [y/n]"
+   If confirmed:
+   ```bash
+   rm -f "${DASHBOARD_FILE}"
+   ```
+   The dashboard file must never be committed — it is gitignored via `*-dashboard.html` as a safety net.
+
+7. **Clean up workspace** — always remove the workspace after finalization, regardless of whether changes were applied:
    ```bash
    rm -rf "${WORKSPACE}"
    ```

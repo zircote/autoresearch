@@ -7,3 +7,4 @@ dist/
 build/
 skills/autoresearch-workspace/
 *-autonomous/
+*-dashboard.html

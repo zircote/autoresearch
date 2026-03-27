@@ -189,6 +189,13 @@ FINALIZE:
     restore(workspace/v{best.version}/ → skill_path)
     # Original skill is now updated
 
+  # Open dashboard for viewing, then offer cleanup
+  IF dashboard_out exists:
+    open(dashboard_out)  # Open in browser for user review
+    IF user confirms "Remove dashboard file?":
+      rm dashboard_out
+    # Dashboard is gitignored (*-dashboard.html) as a safety net
+
   # Always clean up workspace — it is transient and must not persist
   rm -rf workspace/
 ```
